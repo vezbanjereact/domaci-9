@@ -1,12 +1,21 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import z from "zod";
+import SearchResults from "./Templates/SearchResults";
+import { useState } from "react";
 
 const schema = z.object({
   movieTitle: z.string().min(3),
 });
 
 type FormFields = z.infer<typeof schema>;
+
+type MovieFields = {
+  poster: string;
+  title: string;
+  plot: string;
+};
 
 const Search = () => {
   const {
@@ -20,8 +29,28 @@ const Search = () => {
     resolver: zodResolver(schema),
   });
 
+  const [movies, setMovies] = useState<MovieFields[]>([]);
+
   const onSubmit: SubmitHandler<FormFields> = async (data) => {
-    console.log(data);
+    axios
+      .get(
+        import.meta.env.VITE_BASE_URL +
+          "?t=" +
+          data.movieTitle +
+          "&apikey=" +
+          import.meta.env.VITE_REACT_APP_OMDBAPI_KEY,
+      )
+      .then((response) =>
+        setMovies([
+          ...movies,
+          {
+            poster: response.data.Poster,
+            title: response.data.Title,
+            plot: response.data.Plot,
+          },
+        ]),
+      )
+      .catch((e) => console.log(e.message));
   };
 
   return (
@@ -50,6 +79,8 @@ const Search = () => {
             {isSubmitting ? "Loading..." : "Search"}
           </button>
         </form>
+
+        <SearchResults movies={movies} />
       </div>
     </div>
   );

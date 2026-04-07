@@ -1,11 +1,21 @@
 import React from "react";
 
-const MovieCard = ({ poster, title, plot }) => {
+interface MovieInformation {
+  poster: string;
+  title: string;
+  plot: string;
+}
+
+interface Movie {
+  movie: MovieInformation;
+}
+
+const MovieCard = ({ movie }: Movie) => {
   return (
-    <div>
-      <img src={poster} />
-      <h1>{title}</h1>
-      <p>{plot}</p>
+    <div className="w-1/3 text-white p-2">
+      <img src={movie.poster} />
+      <h1>{movie.title}</h1>
+      <p>{movie.plot}</p>
     </div>
   );
 };

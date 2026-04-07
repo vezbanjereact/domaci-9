@@ -1,6 +1,3 @@
-import React from "react";
-import { Typography } from "@material-tailwind/react";
-
 const Footer = () => {
   return (
     <footer className="bg-primary bg-black text-white py-5">
