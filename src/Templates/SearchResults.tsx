@@ -1,17 +1,10 @@
-import React from "react";
+import { useContext } from "react";
 import MovieCard from "./Snippets/MovieCard";
+import { ThemeContext } from "../Search";
 
-interface Movie {
-  poster: string;
-  title: string;
-  plot: string;
-}
+const SearchResults = () => {
+  const movies = useContext(ThemeContext);
 
-interface Movies {
-  movies: Movie[];
-}
-
-const SearchResults = ({ movies }: Movies) => {
   return (
     <div className="bg-black">
       <div className="flex flex-wrap mx-auto container px-4">

@@ -1,9 +1,7 @@
-import React from "react";
-
 interface MovieInformation {
   poster: string;
   title: string;
-  plot: string;
+  year: number;
 }
 
 interface Movie {
@@ -15,7 +13,7 @@ const MovieCard = ({ movie }: Movie) => {
     <div className="w-1/3 text-white p-2">
       <img src={movie.poster} />
       <h1>{movie.title}</h1>
-      <p>{movie.plot}</p>
+      <p>{movie.year}</p>
     </div>
   );
 };

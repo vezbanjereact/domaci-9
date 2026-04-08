@@ -3,7 +3,7 @@ import axios from "axios";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import z from "zod";
 import SearchResults from "./Templates/SearchResults";
-import { useState } from "react";
+import { createContext, useState } from "react";
 
 const schema = z.object({
   movieTitle: z.string().min(3),
@@ -14,8 +14,10 @@ type FormFields = z.infer<typeof schema>;
 type MovieFields = {
   poster: string;
   title: string;
-  plot: string;
+  year: number;
 };
+
+export const ThemeContext = createContext<MovieFields[]>([]);
 
 const Search = () => {
   const {
@@ -32,24 +34,29 @@ const Search = () => {
   const [movies, setMovies] = useState<MovieFields[]>([]);
 
   const onSubmit: SubmitHandler<FormFields> = async (data) => {
+    setMovies([]);
     axios
       .get(
         import.meta.env.VITE_BASE_URL +
-          "?t=" +
+          "?s=" +
           data.movieTitle +
           "&apikey=" +
           import.meta.env.VITE_REACT_APP_OMDBAPI_KEY,
       )
-      .then((response) =>
-        setMovies([
-          ...movies,
-          {
-            poster: response.data.Poster,
-            title: response.data.Title,
-            plot: response.data.Plot,
-          },
-        ]),
-      )
+      .then((response) => {
+        for (let index = 0; index < response.data.Search.length; index++) {
+          const movie = response.data.Search[index];
+
+          setMovies((prevItems) => [
+            ...prevItems,
+            {
+              poster: movie.Poster,
+              title: movie.Title,
+              year: movie.Year,
+            },
+          ]);
+        }
+      })
       .catch((e) => console.log(e.message));
   };
 
@@ -80,7 +87,9 @@ const Search = () => {
           </button>
         </form>
 
-        <SearchResults movies={movies} />
+        <ThemeContext.Provider value={movies}>
+          <SearchResults />
+        </ThemeContext.Provider>
       </div>
     </div>
   );
